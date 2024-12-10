@@ -1,6 +1,6 @@
 param([string]$VMName)
 
-Write-Host $VMName
+Write-Host "Vm Name: " $VMName
 
 Write-Host "Set AWS Info"
 
