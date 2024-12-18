@@ -1,0 +1,117 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "value": "eastus"
+        },
+        "networkInterfaceName1": {
+            "value": "vro195_z1"
+        },
+        "enableAcceleratedNetworking": {
+            "value": true
+        },
+        "subnetName": {
+            "value": "prod"
+        },
+        "virtualNetworkId": {
+            "value": "/subscriptions/3d84065a-ef8a-45dc-b3f6-989f9d4842c9/resourceGroups/Skitch-lab-vs/providers/Microsoft.Network/virtualNetworks/Skitch-azure"
+        },
+        "publicIpAddressName1": {
+            "value": "VROip497"
+        },
+        "publicIpAddressType": {
+            "value": "Static"
+        },
+        "publicIpAddressSku": {
+            "value": "Standard"
+        },
+        "pipDeleteOption": {
+            "value": "Detach"
+        },
+        "virtualMachineName": {
+            "value": "VRO"
+        },
+        "virtualMachineName1": {
+            "value": "VRO"
+        },
+        "virtualMachineComputerName1": {
+            "value": "VRO"
+        },
+        "virtualMachineRG": {
+            "value": "Skitch-lab-vs"
+        },
+        "osDiskType": {
+            "value": "Premium_LRS"
+        },
+        "osDiskDeleteOption": {
+            "value": "Detach"
+        },
+        "dataDisks1": {
+            "value": [
+                {
+                    "lun": 0,
+                    "createOption": "fromImage",
+                    "deleteOption": "Detach",
+                    "caching": "None",
+                    "writeAcceleratorEnabled": false,
+                    "id": null,
+                    "name": null,
+                    "storageAccountType": null,
+                    "diskSizeGB": null,
+                    "tier": null,
+                    "diskEncryptionSet": null
+                },
+                {
+                    "lun": 1,
+                    "createOption": "fromImage",
+                    "deleteOption": "Detach",
+                    "caching": "None",
+                    "writeAcceleratorEnabled": false,
+                    "id": null,
+                    "name": null,
+                    "storageAccountType": null,
+                    "diskSizeGB": null,
+                    "tier": null,
+                    "diskEncryptionSet": null
+                }
+            ]
+        },
+        "virtualMachineSize": {
+            "value": "Standard_D8s_v3"
+        },
+        "nicDeleteOption": {
+            "value": "Detach"
+        },
+        "hibernationEnabled": {
+            "value": false
+        },
+        "securityType": {
+            "value": "TrustedLaunch"
+        },
+        "secureBoot": {
+            "value": true
+        },
+        "vTPM": {
+            "value": true
+        },
+        "virtualMachine1Zone": {
+            "value": "1"
+        },
+        "autoShutdownStatus": {
+            "value": "Enabled"
+        },
+        "autoShutdownTime": {
+            "value": "19:00"
+        },
+        "autoShutdownTimeZone": {
+            "value": "UTC"
+        },
+        "autoShutdownNotificationStatus": {
+            "value": "Disabled"
+        },
+        "autoShutdownNotificationLocale": {
+            "value": "en"
+        }
+    }
+}
