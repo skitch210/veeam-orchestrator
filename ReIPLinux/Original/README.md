@@ -2,12 +2,13 @@
 
 ## Author
 
-Tyson Fewins (tfewins)\
-Razvan Ionescu 
+Tyson Fewins (tfewins)
 
 ## Function
 
 This script is designed to query and modify the network device settings in a Linux VM that uses Network Manager to control device configurations. This script is used as a VM step in a recovery or replication failover plan.
+
+* This script uses ReIP rules defined in Veeam Recovery Orchestrator. The new version of the script has an added feature of retrieving ReIP rules from the source replication job in Veeam Backup and Replication.
 
 ***NOTE:*** Before executing this script in a production environment, I strongly recommend you:
 
@@ -18,8 +19,7 @@ This script is designed to query and modify the network device settings in a Lin
 
 ## Known Issues
 
--"Applying re-IP rules" during Process Replica VM step generates a warning. This is normal behavior, as re-IP rules 
-  cannot be automatically applied on Linux VMs by VBR.  
+None currently
 
 ## Requirements
 
@@ -33,62 +33,16 @@ This script is designed to query and modify the network device settings in a Lin
   * New releases of RHEL and its derivatives ship with Network Manager, as well as new releases of Ubuntu.
   * Network Manager is available on other Linux OSes but may require installation and configuration
 * Credentials for target vCenter and VM need to exist in the Recovery Orchestrator Credentials store
-* Add Re IP rule in the replication job or CDP policy used to protect the VMs 
-
-## Description
-
-There are 2 scripts:  
-
-**GetReIpRules.ps1** connects to VBR server and searches the replication job or CDP policy that protects the currently processed VM. 
-Once it finds the VM in a job, it reads the re-IP rules from that job and extracts them to a json file.
-
-**ReIpLinux.ps1** reads the json file for the currently proccesed VM and it connects to the VM replica guest OS to change the IP address. 
-
-![alt text](reip_diagram.jpg)
-
-The scripts are using re-IP rules from VBR replication job or CDP policy to extract network information. 
-
-For example:  
-![alt text](reip_rule_job.jpg)  
-
-Make sure to enter only the keyword "failover" in description. The script uses the description keywords to identify which re-IP rule to extract.  
-
-For restore plans, create a dummy replication job (a job that you will never run), assign the protected VMs to that job and create a re-IP using the keyword "restore".
-
 
 ## Additional Information
 
 In the Orchestration plan - Plan Steps
-
 * Modify the following pre-defined parameter values
 ```
     Common Parameters/Retries = 1 (to limit execution time in case of failure)
     Execute Location/Default Values = Veeam Backup Server
 ```
-* **GetReIpRules.ps1** Add the following required Step Parameters:
-```
-    Name = VbrCredentials
-    Desription = The credential used to authenticate to the Veeam Backup Server where the script is executed
-    Type = Credential
-    Default Value = (Set a default value as needed)
-
-    Name = SourceVmName
-    Desription = Protected VM name
-    Type = Text
-    Default Value = %source_vm_name% (this will pass the VM name at runtime)
-
-    Name = LogPath
-    Desription = Local path on "VbrHostname" where to create logs
-    Type = Text
-    Default Value = (Set a default value as needed)
-
-    Name = CurrentPlanState
-    Desription = VRO plan state
-    Type = Text
-    Default Value = %plan_state% (this will pass the plan state at runtime)
-
-```
-* **ReIPLinux.ps1** Add the following required Step Parameters
+* Add the following required Step Parameters
 ```
     Name = vCenterServer
     Desription = Hostname, FQDN, or IP of the vCenter Server that manages the target VM. This is used for PowerCLI connection.
@@ -105,33 +59,42 @@ In the Orchestration plan - Plan Steps
     Type = Credential
     Default Value = (Set a default value as needed)
 
-    Name = SourceVmName
-    Desription = Protected VM name
-    Type = Text
-    Default Value = %source_vm_name% (this will pass the VM name at runtime)
-
     Name = VMName
     Desription = Name of the target VM
     Type = Text
-    Default Value = %target_vm_name% (this will pass the VM name at runtime)
+    Default Value = %current_vm_name% (this will pass the VM name at runtime)
 
     Name = VMOrigIP
     Desription = Original IP Address. Used to locate the network device to be modified. 
     Type = Text
     Default Value = %current_vm_ip% (this will pass the VM IP at runtime)
 
-    Name = LogPath
-    Desription = Local path on "VbrHostname" where to create logs
+    Name = ReIPRule
+    Desription = Re-IP Rule to apply. Can use asterisk(*) to keep source IP values for an octet. Ex. 10.1.*.* or 10.0.1.* 
     Type = Text
     Default Value = (Set a default value as needed)
-  
-    Name = CurrentPlanState
-    Desription = VRO plan state
+
+    Name = CIDR
+    Desription = CIDR number for subnet mask. Ex. 24, 28, etc.  
     Type = Text
-    Default Value = %plan_state% (this will pass the plan state at runtime)
- 
+    Default Value = (Set a default value as needed)
+
+    Name = NewGateway
+    Desription = New gateway address. 
+    Type = Text
+    Default Value = (Set a default value as needed)
+
+    Name = PrimaryDNS
+    Desription = Primary DNS address. 
+    Type = Text
+    Default Value = (Set a default value as needed)
+
+    Name = SecondaryDNS
+    Desription = Secondary DNS address. 
+    Type = Text
+    Default Value = (Set a default value as needed. If no SecondaryDNS is needed, leave this value blank)
 ```
-* **ReIPLinux.ps1** Add the following optional Step Parameters if needed
+* Add the following optional Step Parameters if needed
 ```
     Name = SudoRequired
     Desription = Use this parameter to force the use of Sudo. 
